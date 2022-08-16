@@ -39,5 +39,7 @@ rule multiqc:
         ),
     log:
         "logs/multiqc.log",
+    benchmark:
+        "benchmarks/results/multiqc.benchmark"
     wrapper:
         "0.74.0/bio/multiqc"

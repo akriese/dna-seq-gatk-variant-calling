@@ -35,6 +35,8 @@ rule recalibrate_calls:
         extra=config["params"]["gatk"]["VariantRecalibrator"],
     log:
         "logs/gatk/variantrecalibrator/{vartype}.log",
+    benchmark:
+        "benchmarks/results/gatk/variantrecalibrator/{vartype}.benchmark"
     wrapper:
         "0.74.0/bio/gatk/variantrecalibrator"
 
@@ -52,5 +54,7 @@ rule merge_calls:
         vcf="results/filtered/all.vcf.gz",
     log:
         "logs/picard/merge-filtered.log",
+    benchmark:
+        "benchmarks/results/picard/mergevcfs.benchmark"
     wrapper:
         "0.74.0/bio/picard/mergevcfs"

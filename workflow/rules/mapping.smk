@@ -8,6 +8,8 @@ rule trim_reads_se:
         extra="",
     log:
         "logs/trimmomatic/{sample}-{unit}.log",
+    benchmark:
+        "benchmarks/results/trim/se_{sample}_{unit}.benchmark"
     wrapper:
         "0.74.0/bio/trimmomatic/se"
 
@@ -26,6 +28,8 @@ rule trim_reads_pe:
         extra=lambda w, output: "-trimlog {}".format(output.trimlog),
     log:
         "logs/trimmomatic/{sample}-{unit}.log",
+    benchmark:
+        "benchmarks/results/trim/pe_{sample}_{unit}.benchmark"
     wrapper:
         "0.74.0/bio/trimmomatic/pe"
 
@@ -44,6 +48,8 @@ rule map_reads:
         sort="samtools",
         sort_order="coordinate",
     threads: 8
+    benchmark:
+        "benchmarks/results/bwa_mem/{sample}_{unit}.benchmark"
     wrapper:
         "0.74.0/bio/bwa/mem"
 
@@ -58,6 +64,8 @@ rule mark_duplicates:
         "logs/picard/dedup/{sample}-{unit}.log",
     params:
         config["params"]["picard"]["MarkDuplicates"],
+    benchmark:
+        "benchmarks/results/picard/markduplicates/{sample}_{unit}.benchmark"
     wrapper:
         "0.74.0/bio/picard/markduplicates"
 
@@ -78,6 +86,8 @@ rule recalibrate_base_qualities:
         extra=get_regions_param() + config["params"]["gatk"]["BaseRecalibrator"],
     resources:
         mem_mb=1024,
+    benchmark:
+        "benchmarks/results/gatk/bqsr/{sample}_{unit}.benchmark"
     wrapper:
         "0.74.0/bio/gatk/baserecalibrator"
 
@@ -97,6 +107,8 @@ rule apply_base_quality_recalibration:
         extra=get_regions_param(),
     resources:
         mem_mb=1024,
+    benchmark:
+        "benchmarks/results/gatk/apply-bqsr/{sample}_{unit}.benchmark"
     wrapper:
         "0.74.0/bio/gatk/applybqsr"
 
@@ -108,5 +120,7 @@ rule samtools_index:
         "{prefix}.bam.bai",
     log:
         "logs/samtools/index/{prefix}.log",
+    benchmark:
+        "benchmarks/results/samtools/index_{prefix}.benchmark"
     wrapper:
         "0.74.0/bio/samtools/index"

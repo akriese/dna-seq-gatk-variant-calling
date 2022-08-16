@@ -29,6 +29,8 @@ rule call_variants:
         "logs/gatk/haplotypecaller/{sample}.{contig}.log",
     params:
         extra=get_call_variants_params,
+    benchmark:
+        "benchmarks/results/gatk/haplotypecaller/{sample}_{contig}.benchmark"
     wrapper:
         "0.59.0/bio/gatk/haplotypecaller"
 
@@ -43,6 +45,8 @@ rule combine_calls:
         gvcf="results/called/all.{contig}.g.vcf.gz",
     log:
         "logs/gatk/combinegvcfs.{contig}.log",
+    benchmark:
+        "benchmarks/results/gatk/combinegvcfs/{contig}.benchmark"
     wrapper:
         "0.74.0/bio/gatk/combinegvcfs"
 
@@ -57,6 +61,8 @@ rule genotype_variants:
         extra=config["params"]["gatk"]["GenotypeGVCFs"],
     log:
         "logs/gatk/genotypegvcfs.{contig}.log",
+    benchmark:
+        "benchmarks/results/gatk/genotypegvcfs/{contig}.benchmark"
     wrapper:
         "0.74.0/bio/gatk/genotypegvcfs"
 
@@ -70,5 +76,7 @@ rule merge_variants:
         vcf="results/genotyped/all.vcf.gz",
     log:
         "logs/picard/merge-genotyped.log",
+    benchmark:
+        "benchmarks/results/picard/mergevcfs.benchmark"
     wrapper:
         "0.74.0/bio/picard/mergevcfs"

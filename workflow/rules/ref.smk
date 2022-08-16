@@ -81,6 +81,8 @@ rule tabix_known_variants:
     params:
         "-p vcf",
     cache: True
+    benchmark:
+        "benchmarks/results/tabix/index.benchmark"
     wrapper:
         "0.74.0/bio/tabix"
 
@@ -95,6 +97,8 @@ rule bwa_index:
     resources:
         mem_mb=369000,
     cache: True
+    benchmark:
+        "benchmarks/results/bwa_index/index.benchmark"
     wrapper:
         "0.74.0/bio/bwa/index"
 
