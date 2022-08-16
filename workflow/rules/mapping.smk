@@ -56,6 +56,14 @@ rule map_reads:
         "0.74.0/bio/bwa/mem"
 
 
+rule make_link_to_mapped_reads:
+    input:
+        "resources/bam_files/{sample}-{unit}.sorted.bam"
+    output:
+        "results/mapped/{sample}-{unit}.sorted.bam"
+    shell:
+        " ln -s $(readlink -e {input}) {output} "
+
 rule mark_duplicates:
     input:
         "results/mapped/{sample}-{unit}.sorted.bam",
