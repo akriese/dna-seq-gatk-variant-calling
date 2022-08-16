@@ -47,7 +47,9 @@ rule map_reads:
         extra=get_read_group,
         sort="samtools",
         sort_order="coordinate",
-    threads: 8
+    threads: 48
+    resources:
+        mem_mb = 20000
     benchmark:
         "benchmarks/results/bwa_mem/{sample}_{unit}.benchmark"
     wrapper:
@@ -64,6 +66,9 @@ rule mark_duplicates:
         "logs/picard/dedup/{sample}-{unit}.log",
     params:
         config["params"]["picard"]["MarkDuplicates"],
+    threads: 30
+    resources:
+        mem_mb = 40000,
     benchmark:
         "benchmarks/results/picard/markduplicates/{sample}_{unit}.benchmark"
     wrapper:
@@ -84,8 +89,9 @@ rule recalibrate_base_qualities:
         "logs/gatk/bqsr/{sample}-{unit}.log",
     params:
         extra=get_regions_param() + config["params"]["gatk"]["BaseRecalibrator"],
+    threads: 20
     resources:
-        mem_mb=1024,
+        mem_mb=40000,
     benchmark:
         "benchmarks/results/gatk/bqsr/{sample}_{unit}.benchmark"
     wrapper:
@@ -105,8 +111,9 @@ rule apply_base_quality_recalibration:
         "logs/gatk/apply-bqsr/{sample}-{unit}.log",
     params:
         extra=get_regions_param(),
+    threads: 20
     resources:
-        mem_mb=1024,
+        mem_mb=40000,
     benchmark:
         "benchmarks/results/gatk/apply-bqsr/{sample}_{unit}.benchmark"
     wrapper:

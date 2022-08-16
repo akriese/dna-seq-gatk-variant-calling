@@ -27,6 +27,9 @@ rule call_variants:
         gvcf=protected("results/called/{sample}.{contig}.g.vcf.gz"),
     log:
         "logs/gatk/haplotypecaller/{sample}.{contig}.log",
+    threads: 16
+    resources:
+        mem_mb=10000
     params:
         extra=get_call_variants_params,
     benchmark:
@@ -45,6 +48,8 @@ rule combine_calls:
         gvcf="results/called/all.{contig}.g.vcf.gz",
     log:
         "logs/gatk/combinegvcfs.{contig}.log",
+    resources:
+        mem_mb=10000
     benchmark:
         "benchmarks/results/gatk/combinegvcfs/{contig}.benchmark"
     wrapper:
@@ -61,6 +66,8 @@ rule genotype_variants:
         extra=config["params"]["gatk"]["GenotypeGVCFs"],
     log:
         "logs/gatk/genotypegvcfs.{contig}.log",
+    resources:
+        mem_mb=10000
     benchmark:
         "benchmarks/results/gatk/genotypegvcfs/{contig}.benchmark"
     wrapper:
@@ -76,6 +83,8 @@ rule merge_variants:
         vcf="results/genotyped/all.vcf.gz",
     log:
         "logs/picard/merge-genotyped.log",
+    resources:
+        mem_mb=10000
     benchmark:
         "benchmarks/results/picard/mergevcfs.benchmark"
     wrapper:

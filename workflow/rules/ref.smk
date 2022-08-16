@@ -94,6 +94,7 @@ rule bwa_index:
         multiext("resources/genome.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa"),
     log:
         "logs/bwa_index.log",
+    threads: 20
     resources:
         mem_mb=369000,
     cache: True

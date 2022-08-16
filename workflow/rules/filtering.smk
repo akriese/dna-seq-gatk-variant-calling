@@ -35,6 +35,9 @@ rule recalibrate_calls:
         extra=config["params"]["gatk"]["VariantRecalibrator"],
     log:
         "logs/gatk/variantrecalibrator/{vartype}.log",
+    threads: 40
+    resources:
+        mem_mb = 50000
     benchmark:
         "benchmarks/results/gatk/variantrecalibrator/{vartype}.benchmark"
     wrapper:
