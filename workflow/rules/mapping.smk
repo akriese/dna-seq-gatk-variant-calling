@@ -83,6 +83,31 @@ rule mark_duplicates:
         "0.74.0/bio/picard/markduplicates"
 
 
+rule sambamba_markdup:
+    input:
+        "results/mapped/{sample}-{unit}.sorted.bam"
+    output:
+        "results/dedup/{sample}-{unit}.bam"
+    params:
+        extra=("--overflow-list-size=600000 " +
+            "--hash-table-size=600000 " +
+            "-p " +
+            ("-r" if config["params"]["picard"]["MarkDuplicates"] == "REMOVE_DUPLICATES=true" else ""))
+    log:
+        "logs/sambamba-markdup/{sample}-{unit}.log"
+    benchmark:
+        "benchmarks/results/sambamba/markduplicates/{sample}_{unit}.benchmark"
+    threads: 16
+    wrapper:
+        "v1.8.0/bio/sambamba/markdup"
+    #conda:
+        #"../envs/sambamba.yaml"
+#    shell:
+#        """
+#            sambamba markdup {params.extra} -t {threads} {input} {output} &> {log}
+#        """
+
+
 rule recalibrate_base_qualities:
     input:
         bam=get_recal_input(),
