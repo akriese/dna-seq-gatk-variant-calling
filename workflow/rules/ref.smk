@@ -71,18 +71,17 @@ rule remove_iupac_codes:
         "rbt vcf-fix-iupac-alleles < {input} | bcftools view -Oz > {output}"
 
 
-rule tabix_known_variants:
+rule tabix_vcf:
     input:
-        "resources/variation.noiupac.vcf.gz",
+        "{file_to_index}.vcf.gz",
     output:
-        "resources/variation.noiupac.vcf.gz.tbi",
+        temp("{file_to_index}.vcf.gz.tbi",)
     log:
-        "logs/tabix/variation.log",
+        "logs/tabix/{file_to_index}.log",
     params:
         "-p vcf",
-    cache: True
     benchmark:
-        "benchmarks/results/tabix/index.benchmark"
+        "benchmarks/results/tabix/{file_to_index}.benchmark"
     wrapper:
         "0.74.0/bio/tabix"
 
