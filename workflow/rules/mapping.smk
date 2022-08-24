@@ -39,7 +39,7 @@ rule map_reads:
         reads=get_trimmed_reads,
         idx=rules.bwa_index.output,
     output:
-        temp("results/mapped/{sample}-{unit}.sorted.bam"),
+        "results/mapped/{sample}-{unit}.sorted.bam",
     log:
         "logs/bwa_mem/{sample}-{unit}.log",
     params:
@@ -68,7 +68,7 @@ rule mark_duplicates:
     input:
         "results/mapped/{sample}-{unit}.sorted.bam",
     output:
-        bam=temp("results/dedup/{sample}-{unit}.bam"),
+        bam="results/dedup/{sample}-{unit}.bam",
         metrics="results/qc/dedup/{sample}-{unit}.metrics.txt",
     log:
         "logs/picard/dedup/{sample}-{unit}.log",
@@ -139,7 +139,7 @@ rule apply_base_quality_recalibration:
         dict="resources/genome.dict",
         recal_table="results/recal/{sample}-{unit}.grp",
     output:
-        bam=protected("results/recal/{sample}-{unit}.bam"),
+        bam="results/recal/{sample}-{unit}.bam",
     log:
         "logs/gatk/apply-bqsr/{sample}-{unit}.log",
     params:
