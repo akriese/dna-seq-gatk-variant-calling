@@ -34,6 +34,7 @@ wildcard_constraints:
     vartype="snvs|indels",
     sample="|".join(samples.index),
     unit="|".join(units["unit"]),
+    caller="gatk|freebayes"
 
 
 ##### Helper functions #####

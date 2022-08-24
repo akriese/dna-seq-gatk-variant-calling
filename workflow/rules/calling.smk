@@ -24,7 +24,7 @@ rule call_variants:
             else []
         ),
     output:
-        gvcf=protected("results/called/{sample}.{contig}.g.vcf.gz"),
+        gvcf="results/called/gatk/{sample}.{contig}.g.vcf.gz",
     log:
         "logs/gatk/haplotypecaller/{sample}.{contig}.log",
     threads: 16
@@ -66,16 +66,16 @@ rule combine_calls:
     input:
         ref="resources/genome.fasta",
         gvcfs=expand(
-            "results/called/{sample}.{{contig}}.g.vcf.gz", sample=samples.index
+            "results/called/gatk/{sample}.{{contig}}.g.vcf.gz", sample=samples.index
         ),
     output:
-        gvcf="results/called/all.{contig}.g.vcf.gz",
+        gvcf="results/called/gatk/all.{contig}.g.vcf.gz",
     log:
-        "logs/gatk/combinegvcfs.{contig}.log",
+        "logs/gatk/combinegvcfs.gatk_{contig}.log",
     resources:
         mem_mb=10000
     benchmark:
-        "benchmarks/results/gatk/combinegvcfs/{contig}.benchmark"
+        "benchmarks/results/gatk/combinegvcfs/gatk_{contig}.benchmark"
     wrapper:
         "0.74.0/bio/gatk/combinegvcfs"
 
@@ -83,17 +83,17 @@ rule combine_calls:
 rule genotype_variants:
     input:
         ref="resources/genome.fasta",
-        gvcf="results/called/all.{contig}.g.vcf.gz",
+        gvcf="results/called/gatk/all.{contig}.g.vcf.gz",
     output:
-        vcf=temp("results/genotyped/all.{contig}.vcf.gz"),
+        vcf=temp("results/genotyped/gatk/all.{contig}.vcf.gz"),
     params:
         extra=config["params"]["gatk"]["GenotypeGVCFs"],
     log:
-        "logs/gatk/genotypegvcfs.{contig}.log",
+        "logs/gatk/genotypegvcfs.gatk_{contig}.log",
     resources:
         mem_mb=10000
     benchmark:
-        "benchmarks/results/gatk/genotypegvcfs/{contig}.benchmark"
+        "benchmarks/results/gatk/genotypegvcfs/gatk_{contig}.benchmark"
     wrapper:
         "0.74.0/bio/gatk/genotypegvcfs"
 
@@ -101,16 +101,16 @@ rule genotype_variants:
 rule merge_variants:
     input:
         vcfs=lambda w: expand(
-            "results/genotyped/all.{contig}.vcf.gz", contig=get_contigs()
+            "results/genotyped/gatk/all.{contig}.vcf.gz", contig=get_contigs()
         ),
     output:
-        vcf="results/genotyped/all.vcf.gz",
+        vcf="results/genotyped/gatk/all.vcf.gz",
     log:
-        "logs/picard/merge-genotyped.log",
+        "logs/picard/merge-genotyped_gatk.log",
     resources:
         mem_mb=10000
     benchmark:
-        "benchmarks/results/picard/mergevcfs.benchmark"
+        "benchmarks/results/picard/mergevcfs_gatk.benchmark"
     wrapper:
         "0.74.0/bio/picard/mergevcfs"
 
