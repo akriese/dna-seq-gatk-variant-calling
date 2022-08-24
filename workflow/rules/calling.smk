@@ -113,3 +113,17 @@ rule merge_variants:
         "benchmarks/results/picard/mergevcfs.benchmark"
     wrapper:
         "0.74.0/bio/picard/mergevcfs"
+
+rule vcf_gzip:
+    input:
+        "{prefix}.vcf"
+    output:
+        "{prefix}.vcf.gz"
+    threads: 8
+    log:
+        "logs/bgzip/{prefix}.benchmark"
+    shell:
+        """
+        (bgzip -f --threads {threads} {input} > {output}) &> {log}
+        """
+
