@@ -27,13 +27,13 @@ rule call_variants:
         gvcf="results/called/gatk/{sample}.{contig}.g.vcf.gz",
     log:
         "logs/gatk/haplotypecaller/{sample}.{contig}.log",
-    threads: 16
-    resources:
-        mem_mb=10000
-    params:
-        extra=get_call_variants_params,
     benchmark:
         "benchmarks/results/gatk/haplotypecaller/{sample}_{contig}.benchmark"
+    threads: 20
+    resources:
+        mem_mb=100000
+    params:
+        extra=get_call_variants_params,
     wrapper:
         "0.59.0/bio/gatk/haplotypecaller"
 
