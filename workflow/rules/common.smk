@@ -87,6 +87,13 @@ def get_sample_bams(wildcards):
     )
 
 
+def get_all_sample_bams():
+    res = []
+    for sample in samples.index:
+        res.extend(expand("results/recal/{sample}-{unit}.bam", sample=sample, unit=units.loc[sample].unit))
+    return res
+
+
 def get_regions_param(regions=config["processing"].get("restrict-regions"), default=""):
     if regions:
         params = "--intervals '{}' ".format(regions)
