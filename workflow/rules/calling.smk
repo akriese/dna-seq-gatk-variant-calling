@@ -38,6 +38,30 @@ rule call_variants:
         "0.59.0/bio/gatk/haplotypecaller"
 
 
+rule freebayes_snv_caller:
+    input:
+        samples = get_all_sample_bams(),
+        ref = "resources/genome.fasta",
+        # optional BED file specifying chromosomal regions on which freebayes
+        # should run, e.g. all regions that show coverage
+        regions = config["processing"].get("restrict-regions")
+    output:
+        "results/genotyped/freebayes/all.vcf",
+    log:
+        "logs/results/freebayes/all.log",
+    benchmark:
+        "benchmarks/results/freebayes/all.benchmark",
+    params:
+        extra="",  # optional parameters
+        chunksize=100000,  # reference genome chunk size for parallelization (default: 100000)
+        normalize=False,  # optional flag to use bcftools norm to normalize indels (Valid params are -a, -f, -m, -D or -d)
+    threads: 50
+    resources:
+        mem_mb = 100000,
+    wrapper:
+        "v1.3.2/bio/freebayes"
+
+
 rule combine_calls:
     input:
         ref="resources/genome.fasta",
