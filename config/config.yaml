@@ -16,10 +16,16 @@ filtering:
   hard:
     # hard filtering as outlined in GATK docs
     # (https://gatkforums.broadinstitute.org/gatk/discussion/2806/howto-apply-hard-filters-to-a-call-set)
-    snvs:
-      "QD < 2.0 || FS > 60.0 || MQ < 40.0 || MQRankSum < -12.5 || ReadPosRankSum < -8.0"
-    indels:
-      "QD < 2.0 || FS > 200.0 || ReadPosRankSum < -20.0"
+    gatk:
+      snvs:
+        "QD < 2.0 || FS > 60.0 || MQ < 40.0 || MQRankSum < -12.5 || ReadPosRankSum < -8.0"
+      indels:
+        "QD < 2.0 || FS > 200.0 || ReadPosRankSum < -20.0"
+    freebayes:
+      snvs:
+        "QUAL < 20 || DP < 6" # In some places, QUAL < 40 is recommended to get 1 in 10e4 false positives
+      indels:
+        "QUAL < 20 || DP < 6"
 
 processing:
   remove-duplicates: true

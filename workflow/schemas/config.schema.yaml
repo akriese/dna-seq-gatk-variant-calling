@@ -32,13 +32,26 @@ properties:
       hard:
         type: object
         properties:
-          snvs:
-            type: string
-          indels:
-            type: string
-        required:
-          - snvs
-          - indels
+          gatk:
+            type: object
+            properties:
+              snvs:
+                type: string
+              indels:
+                type: string
+            required:
+              - snvs
+              - indels
+          freebayes:
+            type: object
+            properties:
+              snvs:
+                type: string
+              indels:
+                type: string
+            required:
+              - snvs
+              - indels
     required:
       - vqsr
       - hard
