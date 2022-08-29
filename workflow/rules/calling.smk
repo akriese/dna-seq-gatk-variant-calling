@@ -11,7 +11,7 @@ if "restrict-regions" in config["processing"]:
             "bedextract {wildcards.contig} {input} > {output}"
 
 
-rule call_variants:
+rule gatk_snv_caller:
     input:
         bam=get_sample_bams,
         ref="resources/genome.fasta",
@@ -35,7 +35,7 @@ rule call_variants:
     params:
         extra=get_call_variants_params,
     wrapper:
-        "0.59.0/bio/gatk/haplotypecaller"
+        "v1.10.0/bio/gatk/haplotypecaller"
 
 
 rule freebayes_snv_caller:
