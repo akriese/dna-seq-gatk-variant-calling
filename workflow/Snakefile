@@ -9,8 +9,8 @@ rule all:
         "results/annotated/all.gatk.vcf.gz",
         "results/annotated/all.freebayes.vcf.gz",
         #"results/qc/multiqc.html",
-        #"results/plots/depths.svg",
-        #"results/plots/allele-freqs.svg",
+        "results/plots/depths.svg",
+        "results/plots/allele-freqs.svg",
 
 
 ##### Modules #####
