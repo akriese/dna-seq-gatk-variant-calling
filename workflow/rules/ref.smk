@@ -75,7 +75,7 @@ rule tabix_vcf:
     input:
         "{file_to_index}.vcf.gz",
     output:
-        temp("{file_to_index}.vcf.gz.tbi",)
+        temp("{file_to_index}.vcf.gz.tbi")
     log:
         "logs/tabix/{file_to_index}.log",
     params:
