@@ -6,8 +6,9 @@ include: "rules/common.smk"
 
 rule all:
     input:
-        "results/annotated/all.gatk.vcf.gz",
-        "results/annotated/all.freebayes.vcf.gz",
+        # "results/annotated/all.gatk.vcf.gz",
+        # "results/annotated/all.freebayes.vcf.gz",
+        "results/annotated/all.vcf.gz",
         #"results/qc/multiqc.html",
         "results/plots/depths.svg",
         "results/plots/allele-freqs.svg",

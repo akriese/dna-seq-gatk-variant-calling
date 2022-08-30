@@ -62,3 +62,21 @@ rule merge_calls:
         "benchmarks/results/picard/mergevcfs.{caller}.benchmark"
     wrapper:
         "0.74.0/bio/picard/mergevcfs"
+
+rule merge_technologies:
+    input:
+        ref="resources/genome.fasta",
+        vcfs = ["results/filtered/all.gatk.vcf.gz",
+                "results/filtered/all.freebayes.vcf.gz"]
+    output:
+        vcf="results/filtered/all.combined.vcf.gz",
+    log:
+        "logs/picard/mergevcfs.log",
+    benchmark:
+        "benchmarks/results/picard/mergevcfs/all.benchmark"
+    params:
+        extra="",
+    resources:
+        mem_mb=10000
+    wrapper:
+        "v1.12.0/bio/picard/mergevcfs"

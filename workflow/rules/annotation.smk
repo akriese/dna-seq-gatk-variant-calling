@@ -1,17 +1,17 @@
 rule annotate_variants:
     input:
-        calls="results/filtered/all.{caller}.vcf.gz",
+        calls="results/filtered/all.combined.vcf.gz",
         cache="resources/vep/cache",
         plugins="resources/vep/plugins",
     output:
         calls=report(
-            "results/annotated/all.{caller}.vcf.gz",
-            caption="../report/vcf.{caller}.rst",
+            "results/annotated/all.vcf.gz",
+            caption="../report/vcf.rst",
             category="Calls",
         ),
         stats=report(
-            "results/stats/all.{caller}.stats.html",
-            caption="../report/stats.{caller}.rst",
+            "results/stats/all.stats.html",
+            caption="../report/stats.rst",
             category="Calls",
         ),
     params:
@@ -20,7 +20,8 @@ rule annotate_variants:
         plugins=config["params"]["vep"]["plugins"],
         extra=config["params"]["vep"]["extra"],
     log:
-        "logs/vep/annotate_{caller}.log",
+        "logs/vep/annotate.log",
     threads: 4
     wrapper:
         "0.74.0/bio/vep/annotate"
+
