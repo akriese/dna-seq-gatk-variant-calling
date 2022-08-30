@@ -100,12 +100,6 @@ rule sambamba_markdup:
     threads: 16
     wrapper:
         "v1.8.0/bio/sambamba/markdup"
-    #conda:
-        #"../envs/sambamba.yaml"
-#    shell:
-#        """
-#            sambamba markdup {params.extra} -t {threads} {input} {output} &> {log}
-#        """
 
 
 rule recalibrate_base_qualities:
