@@ -116,9 +116,9 @@ rule merge_variants:
 
 rule vcf_gzip:
     input:
-        "{prefix}.vcf"
+        "results/genotyped/{prefix}.vcf"
     output:
-        "{prefix}.vcf.gz"
+        "results/genotyped/{prefix}.vcf.gz"
     threads: 8
     log:
         "logs/bgzip/{prefix}.benchmark"
