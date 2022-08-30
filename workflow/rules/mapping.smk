@@ -67,7 +67,6 @@ rule make_link_to_mapped_reads:
         " ln -s $(readlink -e {input}) {output} "
 
 """
-"""
 rule mark_duplicates:
     input:
         "results/mapped/{sample}-{unit}.sorted.bam",
