@@ -34,6 +34,7 @@ rule trim_reads_pe:
         "0.74.0/bio/trimmomatic/pe"
 
 
+"""
 rule map_reads:
     input:
         reads=get_trimmed_reads,
@@ -56,6 +57,7 @@ rule map_reads:
         "0.74.0/bio/bwa/mem"
 
 
+"""
 rule make_link_to_mapped_reads:
     input:
         "resources/bam_files/{sample}-{unit}.sorted.bam"
@@ -64,6 +66,8 @@ rule make_link_to_mapped_reads:
     shell:
         " ln -s $(readlink -e {input}) {output} "
 
+"""
+"""
 rule mark_duplicates:
     input:
         "results/mapped/{sample}-{unit}.sorted.bam",
@@ -82,6 +86,7 @@ rule mark_duplicates:
     wrapper:
         "0.74.0/bio/picard/markduplicates"
 
+"""
 
 rule sambamba_markdup:
     input:
