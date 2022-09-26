@@ -44,7 +44,7 @@ rule freebayes_snv_caller:
         ref = "resources/genome.fasta",
         # optional BED file specifying chromosomal regions on which freebayes
         # should run, e.g. all regions that show coverage
-        regions = config["processing"].get("restrict-regions")
+        regions = config["processing"].get("restrict-regions", [])
     output:
         "results/genotyped/freebayes/all.vcf",
     log:
