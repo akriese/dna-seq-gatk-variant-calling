@@ -44,14 +44,25 @@ def get_contigs():
     with checkpoints.genome_faidx.get().output[0].open() as fai:
         return pd.read_table(fai, header=None, usecols=[0], squeeze=True, dtype=str)
 
-
 def get_fastq(wildcards):
-    """Get fastq files of given sample-unit."""
+    """ Get fastq files of given sample-unit. """
     fastqs = units.loc[(wildcards.sample, wildcards.unit), ["fq1", "fq2"]].dropna()
     if len(fastqs) == 2:
         return {"r1": fastqs.fq1, "r2": fastqs.fq2}
     return {"r1": fastqs.fq1}
 
+def get_unit_bam(wildcards):
+    """ Get bam file of given sample-unit. """
+    bam = units.loc[(wildcards.sample, wildcards.unit), ["bam"]].dropna()[0]
+    if bam == "-":
+        return None
+    return bam
+
+def link_or_mapped_output(wildcards):
+    fname_base = f"results/mapped/{wildcards.sample}-{wildcards.unit}"
+    if get_unit_bam(wildcards) != "-":
+        return f"{fname_base}_link.sorted.bam"
+    return f"{fname_base}.sorted.bam"
 
 def is_single_end(sample, unit):
     """Return True if sample-unit is single end."""

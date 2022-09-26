@@ -13,12 +13,17 @@ properties:
     enum: ["CAPILLARY", "LS454", "ILLUMINA", "SOLID", "HELICOS", "IONTORRENT", "ONT", "PACBIO"]
   fq1:
     type: string
-    description: path to FASTQ file
+    description: path to FASTQ file (if BAM file given, insert a '-' here)
   fq2:
     type: string
-    description: path to second FASTQ file (leave empty in case of single-end)
+    description: path to second FASTQ file (if BAM file given or not paired-end, insert a '-' here)
+  bam:
+    type: string
+    description: path to BAM file (if not available, insert '-' here)
 required:
   - sample
   - unit
   - platform
   - fq1
+  - fq2
+  - bam

@@ -33,14 +33,12 @@ rule trim_reads_pe:
     wrapper:
         "0.74.0/bio/trimmomatic/pe"
 
-
-"""
-rule map_reads:
+rule map_reads_from_fastq:
     input:
         reads=get_trimmed_reads,
         idx=rules.bwa_index.output,
     output:
-        "results/mapped/{sample}-{unit}.sorted.bam",
+        "results/mapped/{sample}-{unit}.sorted.bam"
     log:
         "logs/bwa_mem/{sample}-{unit}.log",
     params:
@@ -56,15 +54,24 @@ rule map_reads:
     wrapper:
         "0.74.0/bio/bwa/mem"
 
-
-"""
 rule make_link_to_mapped_reads:
     input:
-        "resources/bam_files/{sample}-{unit}.sorted.bam"
+        get_unit_bam
     output:
-        "results/mapped/{sample}-{unit}.sorted.bam"
+        "results/mapped/{sample}-{unit}_link.sorted.bam"
     shell:
         " ln -s $(readlink -e {input}) {output} "
+
+# this might be a bit too hacky...
+rule link_or_map:
+    input:
+        link_or_mapped_output
+    output:
+        rules.map_reads_from_fastq.output
+    shell:
+        """ [[ {input} == {output} ]] || mv {input} {output} """
+
+
 
 """
 rule mark_duplicates:
