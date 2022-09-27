@@ -83,14 +83,15 @@ rule mark_duplicates:
     log:
         "logs/picard/dedup/{sample}-{unit}.log",
     params:
-        config["params"]["picard"]["MarkDuplicates"],
+        extra = config["params"]["picard"]["MarkDuplicates"],
+        tmpdir = 200
     threads: 30
     resources:
         mem_mb = 40000,
     benchmark:
         "benchmarks/results/picard/markduplicates/{sample}_{unit}.benchmark"
     wrapper:
-        "0.74.0/bio/picard/markduplicates"
+        "v1.14.0/bio/picard/markduplicates"
 
 """
 
