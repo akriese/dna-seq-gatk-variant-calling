@@ -2,9 +2,9 @@ if "restrict-regions" in config["processing"]:
 
     rule compose_regions:
         input:
-            config["processing"]["restrict-regions"],
+            config["processing"]["restrict-regions"]
         output:
-            "results/called/{contig}.regions.bed",
+            "results/called/{contig}.regions.bed"
         conda:
             "../envs/bedops.yaml"
         shell:
@@ -22,18 +22,18 @@ rule gatk_snv_caller:
             "results/called/{contig}.regions.bed"
             if config["processing"].get("restrict-regions")
             else []
-        ),
+        )
     output:
-        gvcf="results/called/gatk/{sample}.{contig}.g.vcf.gz",
+        gvcf="results/called/gatk/{sample}.{contig}.g.vcf.gz"
     log:
-        "logs/gatk/haplotypecaller/{sample}.{contig}.log",
+        "logs/gatk/haplotypecaller/{sample}.{contig}.log"
     benchmark:
         "benchmarks/results/gatk/haplotypecaller/{sample}_{contig}.benchmark"
     threads: 20
     resources:
         mem_mb=100000
     params:
-        extra=get_call_variants_params,
+        extra=get_call_variants_params
     wrapper:
         "v1.10.0/bio/gatk/haplotypecaller"
 
@@ -46,11 +46,11 @@ rule freebayes_snv_caller:
         # should run, e.g. all regions that show coverage
         regions = config["processing"].get("restrict-regions", [])
     output:
-        "results/genotyped/freebayes/all.vcf",
+        "results/genotyped/freebayes/all.vcf"
     log:
-        "logs/results/freebayes/all.log",
+        "logs/results/freebayes/all.log"
     benchmark:
-        "benchmarks/results/freebayes/all.benchmark",
+        "benchmarks/results/freebayes/all.benchmark"
     params:
         extra="",  # optional parameters
         chunksize=100000,  # reference genome chunk size for parallelization (default: 100000)
@@ -69,9 +69,9 @@ rule combine_calls:
             "results/called/gatk/{sample}.{{contig}}.g.vcf.gz", sample=samples.index
         ),
     output:
-        gvcf="results/called/gatk/all.{contig}.g.vcf.gz",
+        gvcf="results/called/gatk/all.{contig}.g.vcf.gz"
     log:
-        "logs/gatk/combinegvcfs.gatk_{contig}.log",
+        "logs/gatk/combinegvcfs.gatk_{contig}.log"
     resources:
         mem_mb=10000
     benchmark:
@@ -83,13 +83,13 @@ rule combine_calls:
 rule genotype_variants:
     input:
         ref="resources/genome.fasta",
-        gvcf="results/called/gatk/all.{contig}.g.vcf.gz",
+        gvcf="results/called/gatk/all.{contig}.g.vcf.gz"
     output:
-        vcf=temp("results/genotyped/gatk/all.{contig}.vcf.gz"),
+        vcf=temp("results/genotyped/gatk/all.{contig}.vcf.gz")
     params:
-        extra=config["params"]["gatk"]["GenotypeGVCFs"],
+        extra=config["params"]["gatk"]["GenotypeGVCFs"]
     log:
-        "logs/gatk/genotypegvcfs.gatk_{contig}.log",
+        "logs/gatk/genotypegvcfs.gatk_{contig}.log"
     resources:
         mem_mb=10000
     benchmark:
@@ -102,11 +102,11 @@ rule merge_variants:
     input:
         vcfs=lambda w: expand(
             "results/genotyped/gatk/all.{contig}.vcf.gz", contig=get_contigs()
-        ),
+        )
     output:
-        vcf="results/genotyped/gatk/all.vcf.gz",
+        vcf="results/genotyped/gatk/all.vcf.gz"
     log:
-        "logs/picard/merge-genotyped_gatk.log",
+        "logs/picard/merge-genotyped_gatk.log"
     resources:
         mem_mb=10000
     benchmark:

@@ -1,13 +1,13 @@
 rule trim_reads_se:
     input:
-        unpack(get_fastq),
+        unpack(get_fastq)
     output:
-        temp("results/trimmed/{sample}-{unit}.fastq.gz"),
+        temp("results/trimmed/{sample}-{unit}.fastq.gz")
     params:
         **config["params"]["trimmomatic"]["se"],
-        extra="",
+        extra=""
     log:
-        "logs/trimmomatic/{sample}-{unit}.log",
+        "logs/trimmomatic/{sample}-{unit}.log"
     benchmark:
         "benchmarks/results/trim/se_{sample}_{unit}.benchmark"
     wrapper:
@@ -22,12 +22,12 @@ rule trim_reads_pe:
         r2=temp("results/trimmed/{sample}-{unit}.2.fastq.gz"),
         r1_unpaired=temp("results/trimmed/{sample}-{unit}.1.unpaired.fastq.gz"),
         r2_unpaired=temp("results/trimmed/{sample}-{unit}.2.unpaired.fastq.gz"),
-        trimlog="results/trimmed/{sample}-{unit}.trimlog.txt",
+        trimlog="results/trimmed/{sample}-{unit}.trimlog.txt"
     params:
         **config["params"]["trimmomatic"]["pe"],
-        extra=lambda w, output: "-trimlog {}".format(output.trimlog),
+        extra=lambda w, output: "-trimlog {}".format(output.trimlog)
     log:
-        "logs/trimmomatic/{sample}-{unit}.log",
+        "logs/trimmomatic/{sample}-{unit}.log"
     benchmark:
         "benchmarks/results/trim/pe_{sample}_{unit}.benchmark"
     wrapper:
@@ -40,12 +40,12 @@ rule map_reads_from_fastq:
     output:
         "results/mapped/{sample}-{unit}.sorted.bam"
     log:
-        "logs/bwa_mem/{sample}-{unit}.log",
+        "logs/bwa_mem/{sample}-{unit}.log"
     params:
         index=lambda w, input: os.path.splitext(input.idx[0])[0],
         extra=get_read_group,
         sort="samtools",
-        sort_order="coordinate",
+        sort_order="coordinate"
     threads: 48
     resources:
         mem_mb = 20000
@@ -76,12 +76,12 @@ rule link_or_map:
 """
 rule mark_duplicates:
     input:
-        "results/mapped/{sample}-{unit}.sorted.bam",
+        bams="results/mapped/{sample}-{unit}.sorted.bam",
     output:
         bam="results/dedup/{sample}-{unit}.bam",
-        metrics="results/qc/dedup/{sample}-{unit}.metrics.txt",
+        metrics="results/qc/dedup/{sample}-{unit}.metrics.txt"
     log:
-        "logs/picard/dedup/{sample}-{unit}.log",
+        "logs/picard/dedup/{sample}-{unit}.log"
     params:
         extra = config["params"]["picard"]["MarkDuplicates"],
         tmpdir = 200
@@ -121,13 +121,13 @@ rule recalibrate_base_qualities:
         ref="resources/genome.fasta",
         dict="resources/genome.dict",
         known="resources/variation.noiupac.vcf.gz",
-        known_idx="resources/variation.noiupac.vcf.gz.tbi",
+        known_idx="resources/variation.noiupac.vcf.gz.tbi"
     output:
-        recal_table="results/recal/{sample}-{unit}.grp",
+        recal_table="results/recal/{sample}-{unit}.grp"
     log:
-        "logs/gatk/bqsr/{sample}-{unit}.log",
+        "logs/gatk/bqsr/{sample}-{unit}.log"
     params:
-        extra=get_regions_param() + config["params"]["gatk"]["BaseRecalibrator"],
+        extra=get_regions_param() + config["params"]["gatk"]["BaseRecalibrator"]
     threads: 20
     resources:
         mem_mb=40000,
@@ -143,13 +143,13 @@ rule apply_base_quality_recalibration:
         bai=get_recal_input(bai=True),
         ref="resources/genome.fasta",
         dict="resources/genome.dict",
-        recal_table="results/recal/{sample}-{unit}.grp",
+        recal_table="results/recal/{sample}-{unit}.grp"
     output:
-        bam="results/recal/{sample}-{unit}.bam",
+        bam="results/recal/{sample}-{unit}.bam"
     log:
-        "logs/gatk/apply-bqsr/{sample}-{unit}.log",
+        "logs/gatk/apply-bqsr/{sample}-{unit}.log"
     params:
-        extra=get_regions_param(),
+        extra=get_regions_param()
     threads: 20
     resources:
         mem_mb=40000,
@@ -161,11 +161,11 @@ rule apply_base_quality_recalibration:
 
 rule samtools_index:
     input:
-        "{prefix}.bam",
+        "{prefix}.bam"
     output:
-        "{prefix}.bam.bai",
+        "{prefix}.bam.bai"
     log:
-        "logs/samtools/index/{prefix}.log",
+        "logs/samtools/index/{prefix}.log"
     benchmark:
         "benchmarks/results/samtools/index_{prefix}.benchmark"
     wrapper:
