@@ -2,7 +2,9 @@ rule get_genome:
     output:
         "resources/genome.fasta"
     log:
-        "logs/get-genome.log"
+        "logs/ref/get_genome/all.log"
+    benchmark:
+        "benchmarks/ref/get_genome/all.benchmark"
     params:
         species=config["ref"]["species"],
         datatype="dna",
@@ -19,7 +21,7 @@ checkpoint genome_faidx:
     output:
         "resources/genome.fasta.fai"
     log:
-        "logs/genome-faidx.log"
+        "logs/ref/genome_faidx/all.log"
     cache: True
     wrapper:
         "0.74.0/bio/samtools/faidx"
@@ -31,7 +33,9 @@ rule genome_dict:
     output:
         "resources/genome.dict"
     log:
-        "logs/samtools/create_dict.log"
+        "logs/ref/genome_dict/all.log"
+    benchmark:
+        "benchmarks/ref/genome_dict/all.benchmark"
     conda:
         "../envs/samtools.yaml"
     cache: True
@@ -46,7 +50,9 @@ rule get_known_variation:
     output:
         vcf="resources/variation.vcf.gz"
     log:
-        "logs/get-known-variants.log"
+        "logs/ref/get_known_variation/all.log"
+    benchmark:
+        "benchmarks/ref/get_known_variation/all.benchmark"
     params:
         species=config["ref"]["species"],
         build=config["ref"]["build"],
@@ -63,7 +69,9 @@ rule remove_iupac_codes:
     output:
         "resources/variation.noiupac.vcf.gz"
     log:
-        "logs/fix-iupac-alleles.log"
+        "logs/ref/remove_iupac_codes/all.log"
+    benchmark:
+        "benchmarks/ref/remove_iupac_codes/all.benchmark"
     conda:
         "../envs/rbt.yaml"
     cache: True
@@ -77,11 +85,11 @@ rule tabix_vcf:
     output:
         "{file_to_index}.vcf.gz.tbi"
     log:
-        "logs/tabix/{file_to_index}.log"
+        "logs/ref/tabix_vcf/{file_to_index}.log"
+    benchmark:
+        "benchmarks/ref/tabix_vcf/{file_to_index}.benchmark"
     params:
         "-p vcf",
-    benchmark:
-        "benchmarks/results/tabix/{file_to_index}.benchmark"
     wrapper:
         "0.74.0/bio/tabix"
 
@@ -92,13 +100,13 @@ rule bwa_index:
     output:
         multiext("resources/genome.fasta", ".amb", ".ann", ".bwt", ".pac", ".sa")
     log:
-        "logs/bwa_index.log"
+        "logs/ref/bwa_index/all.log"
+    benchmark:
+        "benchmarks/ref/bwa_index/all.benchmark"
     threads: 20
     resources:
         mem_mb=369000
     cache: True
-    benchmark:
-        "benchmarks/results/bwa_index/index.benchmark"
     wrapper:
         "0.74.0/bio/bwa/index"
 
@@ -106,12 +114,14 @@ rule bwa_index:
 rule get_vep_cache:
     output:
         directory("resources/vep/cache")
+    log:
+        "logs/ref/get_vep_cache/all.log"
+    benchmark:
+        "benchmarks/ref/get_vep_cache/all.benchmark"
     params:
         species=config["ref"]["species"],
         build=config["ref"]["build"],
         release=config["ref"]["release"]
-    log:
-        "logs/vep/cache.log"
     wrapper:
         "0.74.0/bio/vep/cache"
 
@@ -120,7 +130,9 @@ rule get_vep_plugins:
     output:
         directory("resources/vep/plugins")
     log:
-        "logs/vep/plugins.log"
+        "logs/ref/get_vep_plugins/all.log"
+    benchmark:
+        "benchmarks/ref/get_vep_plugins/all.benchmark"
     params:
         release=config["ref"]["release"]
     wrapper:

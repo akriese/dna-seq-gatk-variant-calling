@@ -1,15 +1,16 @@
+
 rule trim_reads_se:
     input:
         unpack(get_fastq)
     output:
         temp("results/trimmed/{sample}-{unit}.fastq.gz")
+    log:
+        "logs/mapping/trim_reads_se/{sample}-{unit}.log"
+    benchmark:
+        "benchmarks/mapping/trim_reads_se/{sample}-{unit}.benchmark"
     params:
         **config["params"]["trimmomatic"]["se"],
         extra=""
-    log:
-        "logs/trimmomatic/{sample}-{unit}.log"
-    benchmark:
-        "benchmarks/results/trim/se_{sample}_{unit}.benchmark"
     wrapper:
         "0.74.0/bio/trimmomatic/se"
 
@@ -23,13 +24,13 @@ rule trim_reads_pe:
         r1_unpaired=temp("results/trimmed/{sample}-{unit}.1.unpaired.fastq.gz"),
         r2_unpaired=temp("results/trimmed/{sample}-{unit}.2.unpaired.fastq.gz"),
         trimlog="results/trimmed/{sample}-{unit}.trimlog.txt"
+    log:
+        "logs/mapping/trim_reads_pe/{sample}-{unit}.log"
+    benchmark:
+        "benchmarks/mapping/trim_reads_pe/{sample}-{unit}.benchmark"
     params:
         **config["params"]["trimmomatic"]["pe"],
         extra=lambda w, output: "-trimlog {}".format(output.trimlog)
-    log:
-        "logs/trimmomatic/{sample}-{unit}.log"
-    benchmark:
-        "benchmarks/results/trim/pe_{sample}_{unit}.benchmark"
     wrapper:
         "0.74.0/bio/trimmomatic/pe"
 
@@ -40,7 +41,9 @@ rule map_reads_from_fastq:
     output:
         "results/mapped/{sample}-{unit}.sorted.bam"
     log:
-        "logs/bwa_mem/{sample}-{unit}.log"
+        "logs/mapping/map_reads_from_fastq/{sample}-{unit}.log"
+    benchmark:
+        "benchmarks/mapping/map_reads_from_fastq/{sample}-{unit}.benchmark"
     params:
         index=lambda w, input: os.path.splitext(input.idx[0])[0],
         extra=get_read_group,
@@ -49,8 +52,6 @@ rule map_reads_from_fastq:
     threads: 48
     resources:
         mem_mb = 20000
-    benchmark:
-        "benchmarks/results/bwa_mem/{sample}_{unit}.benchmark"
     wrapper:
         "0.74.0/bio/bwa/mem"
 
@@ -81,15 +82,15 @@ rule mark_duplicates:
         bam="results/dedup/{sample}-{unit}.bam",
         metrics="results/qc/dedup/{sample}-{unit}.metrics.txt"
     log:
-        "logs/picard/dedup/{sample}-{unit}.log"
+        "logs/mapping/mark_duplicates/{sample}-{unit}.log"
+    benchmark:
+        "benchmarks/mapping/mark_duplicates/{sample}-{unit}.benchmark"
     params:
         extra = config["params"]["picard"]["MarkDuplicates"],
         tmpdir = 200
     threads: 30
     resources:
         mem_mb = 40000,
-    benchmark:
-        "benchmarks/results/picard/markduplicates/{sample}_{unit}.benchmark"
     wrapper:
         "v1.14.0/bio/picard/markduplicates"
 
@@ -100,15 +101,14 @@ rule sambamba_markdup:
         "results/mapped/{sample}-{unit}.sorted.bam"
     output:
         "results/dedup/{sample}-{unit}.bam"
+    log:
+        "logs/mapping/sambamba_markdup/{sample}-{unit}.log"
+    benchmark:
+        "benchmarks/mapping/sambamba_markdup/{sample}-{unit}.benchmark"
     params:
         extra=("--overflow-list-size=600000 " +
             "--hash-table-size=600000 " +
             "-p " +
-            ("-r" if config["params"]["picard"]["MarkDuplicates"] == "REMOVE_DUPLICATES=true" else ""))
-    log:
-        "logs/sambamba-markdup/{sample}-{unit}.log"
-    benchmark:
-        "benchmarks/results/sambamba/markduplicates/{sample}_{unit}.benchmark"
     threads: 16
     wrapper:
         "v1.8.0/bio/sambamba/markdup"
@@ -125,7 +125,9 @@ rule recalibrate_base_qualities:
     output:
         recal_table="results/recal/{sample}-{unit}.grp"
     log:
-        "logs/gatk/bqsr/{sample}-{unit}.log"
+        "logs/mapping/recalibrate_base_qualities/{sample}-{unit}.log"
+    benchmark:
+        "benchmarks/mapping/recalibrate_base_qualities/{sample}-{unit}.benchmark"
     params:
         extra=get_regions_param() + config["params"]["gatk"]["BaseRecalibrator"]
     threads: 20
@@ -147,14 +149,14 @@ rule apply_base_quality_recalibration:
     output:
         bam="results/recal/{sample}-{unit}.bam"
     log:
-        "logs/gatk/apply-bqsr/{sample}-{unit}.log"
+        "logs/mapping/apply_base_quality_recalibration/{sample}-{unit}.log"
+    benchmark:
+        "benchmarks/mapping/apply_base_quality_recalibration/{sample}-{unit}.benchmark"
     params:
         extra=get_regions_param()
     threads: 20
     resources:
         mem_mb=40000,
-    benchmark:
-        "benchmarks/results/gatk/apply-bqsr/{sample}_{unit}.benchmark"
     wrapper:
         "0.74.0/bio/gatk/applybqsr"
 
@@ -165,8 +167,8 @@ rule samtools_index:
     output:
         "{prefix}.bam.bai"
     log:
-        "logs/samtools/index/{prefix}.log"
+        "logs/mapping/samtools_index/{prefix}.log"
     benchmark:
-        "benchmarks/results/samtools/index_{prefix}.benchmark"
+        "benchmarks/mapping/samtools_index/{prefix}.benchmark"
     wrapper:
         "0.74.0/bio/samtools/index"

@@ -14,13 +14,15 @@ rule annotate_variants:
             caption="../report/stats.rst",
             category="Calls"
         )
+    log:
+        "logs/annotation/annotate_variants/all.log"
+    benchmark:
+        "benchmarks/annotation/annotate_variants/all.benchmark"
     params:
         # Pass a list of plugins to use, see https://www.ensembl.org/info/docs/tools/vep/script/vep_plugins.html
         # Plugin args can be added as well, e.g. via an entry "MyPlugin,1,FOO", see docs.
         plugins=config["params"]["vep"]["plugins"],
         extra=config["params"]["vep"]["extra"]
-    log:
-        "logs/vep/annotate.log"
     threads: 4
     wrapper:
         "0.74.0/bio/vep/annotate"

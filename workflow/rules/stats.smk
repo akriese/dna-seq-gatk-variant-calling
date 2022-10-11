@@ -8,7 +8,9 @@ rule vcf_to_tsv:
             category="Calls",
         )
     log:
-        "logs/vcf-to-tsv.log"
+        "logs/stats/vcf_to_tsv/all.log"
+    benchmark:
+        "benchmarks/stats/vcf_to_tsv/all.benchmark"
     conda:
         "../envs/rbt.yaml"
     shell:
@@ -30,7 +32,9 @@ rule plot_stats:
             category="Plots"
         )
     log:
-        "logs/plot-stats.log"
+        "logs/stats/plot_stats/all.log"
+    benchmark:
+        "benchmarks/stats/plot_stats/all.benchmark"
     conda:
         "../envs/stats.yaml"
     script:

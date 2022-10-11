@@ -5,10 +5,12 @@ rule select_calls:
         tbi="results/genotyped/{caller}/all.vcf.gz.tbi"
     output:
         vcf=temp("results/filtered/all.{vartype}_{caller}.vcf.gz")
+    log:
+        "logs/filtering/select_calls/{caller}/{vartype}.log"
+    benchmark:
+        "benchmarks/filtering/select_calls/{caller}/{vartype}.benchmark"
     params:
         extra=get_vartype_arg
-    log:
-        "logs/gatk/selectvariants/{vartype}_{caller}.log"
     wrapper:
         "0.59.0/bio/gatk/selectvariants"
 
@@ -19,10 +21,12 @@ rule hard_filter_calls:
         vcf="results/filtered/all.{vartype}_{caller}.vcf.gz",
     output:
         vcf=temp("results/filtered/all.{vartype}_{caller}.hardfiltered.vcf.gz")
+    log:
+        "logs/filtering/hard_filter_calls/{caller}/{vartype}.log"
+    benchmark:
+        "benchmarks/filtering/hard_filter_calls/{caller}/{vartype}.benchmark"
     params:
         filters=get_filter
-    log:
-        "logs/gatk/variantfiltration/{vartype}_{caller}.log"
     wrapper:
         "0.74.0/bio/gatk/variantfiltration"
 
@@ -32,15 +36,15 @@ rule recalibrate_calls:
         vcf="results/filtered/all.{vartype}_{caller}.vcf.gz"
     output:
         vcf=temp("results/filtered/all.{vartype}_{caller}.recalibrated.vcf.gz")
+    log:
+        "logs/filtering/recalibrate_calls/{caller}/{vartype}.log"
+    benchmark:
+        "benchmarks/filtering/recalibrate_calls/{caller}/{vartype}.benchmark"
     params:
         extra=config["params"]["gatk"]["VariantRecalibrator"]
-    log:
-        "logs/gatk/variantrecalibrator/{vartype}_{caller}.log"
     threads: 40
     resources:
         mem_mb = 50000
-    benchmark:
-        "benchmarks/results/gatk/variantrecalibrator/{vartype}_{caller}.benchmark"
     wrapper:
         "0.74.0/bio/gatk/variantrecalibrator"
 
@@ -57,9 +61,9 @@ rule merge_calls:
     output:
         vcf="results/filtered/all.{caller}.vcf.gz"
     log:
-        "logs/picard/merge-filtered.{caller}.log"
+        "logs/filtering/merge_calls/{caller}.log"
     benchmark:
-        "benchmarks/results/picard/mergevcfs.{caller}.benchmark"
+        "benchmarks/filtering/merge_calls/{caller}.benchmark"
     wrapper:
         "0.74.0/bio/picard/mergevcfs"
 
@@ -71,9 +75,9 @@ rule merge_technologies:
     output:
         vcf="results/filtered/all.combined.vcf.gz"
     log:
-        "logs/picard/mergevcfs.log"
+        "logs/filtering/merge_technologies/all.log"
     benchmark:
-        "benchmarks/results/picard/mergevcfs/all.benchmark"
+        "benchmarks/filtering/merge_technologies/all.benchmark"
     params:
         extra="",
     resources:

@@ -26,10 +26,10 @@ rule gatk_snv_caller:
     output:
         gvcf="results/called/gatk/{sample}.{contig}.g.vcf.gz"
     log:
-        "logs/gatk/haplotypecaller/{sample}.{contig}.log"
+        "logs/calling/gatk_snv_caller/{sample}/{contig}.log"
     benchmark:
-        "benchmarks/results/gatk/haplotypecaller/{sample}_{contig}.benchmark"
     threads: 20
+        "benchmarks/calling/gatk_snv_caller/{sample}/{contig}.benchmark"
     resources:
         mem_mb=100000
     params:
@@ -48,9 +48,9 @@ rule freebayes_snv_caller:
     output:
         "results/genotyped/freebayes/all.vcf"
     log:
-        "logs/results/freebayes/all.log"
+        "logs/calling/freebayes_snv_caller/all.log"
     benchmark:
-        "benchmarks/results/freebayes/all.benchmark"
+        "benchmarks/calling/freebayes_snv_caller/all.benchmark"
     params:
         extra="",  # optional parameters
         chunksize=100000,  # reference genome chunk size for parallelization (default: 100000)
@@ -71,11 +71,11 @@ rule combine_calls:
     output:
         gvcf="results/called/gatk/all.{contig}.g.vcf.gz"
     log:
-        "logs/gatk/combinegvcfs.gatk_{contig}.log"
+        "logs/calling/combine_calls/{contig}.log"
+    benchmark:
+        "benchmarks/calling/combine_calls/{contig}.benchmark"
     resources:
         mem_mb=10000
-    benchmark:
-        "benchmarks/results/gatk/combinegvcfs/gatk_{contig}.benchmark"
     wrapper:
         "0.74.0/bio/gatk/combinegvcfs"
 
@@ -86,14 +86,14 @@ rule genotype_variants:
         gvcf="results/called/gatk/all.{contig}.g.vcf.gz"
     output:
         vcf=temp("results/genotyped/gatk/all.{contig}.vcf.gz")
+    log:
+        "logs/calling/genotype_variants/{contig}.log"
+    benchmark:
+        "benchmarks/calling/genotype_variants/{contig}.benchmark"
     params:
         extra=config["params"]["gatk"]["GenotypeGVCFs"]
-    log:
-        "logs/gatk/genotypegvcfs.gatk_{contig}.log"
     resources:
         mem_mb=10000
-    benchmark:
-        "benchmarks/results/gatk/genotypegvcfs/gatk_{contig}.benchmark"
     wrapper:
         "0.74.0/bio/gatk/genotypegvcfs"
 
@@ -106,11 +106,11 @@ rule merge_variants:
     output:
         vcf="results/genotyped/gatk/all.vcf.gz"
     log:
-        "logs/picard/merge-genotyped_gatk.log"
+        "logs/calling/merge_variants/all.log"
+    benchmark:
+        "benchmarks/calling/merge_variants/all.benchmark"
     resources:
         mem_mb=10000
-    benchmark:
-        "benchmarks/results/picard/mergevcfs_gatk.benchmark"
     wrapper:
         "0.74.0/bio/picard/mergevcfs"
 
@@ -121,7 +121,9 @@ rule vcf_gzip:
         "results/genotyped/{prefix}.vcf.gz"
     threads: 8
     log:
-        "logs/bgzip/{prefix}.benchmark"
+        "logs/calling/vcf_gzip/{prefix}.log"
+    benchmark:
+        "benchmarks/calling/vcf_gzip/{prefix}.benchmark"
     shell:
         """
         (bgzip -f --threads {threads} {input} > {output}) &> {log}

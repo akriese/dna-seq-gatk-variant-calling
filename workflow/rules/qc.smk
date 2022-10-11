@@ -5,7 +5,9 @@ rule fastqc:
         html="results/qc/fastqc/{sample}-{unit}.html",
         zip="results/qc/fastqc/{sample}-{unit}.zip",
     log:
-        "logs/fastqc/{sample}-{unit}.log"
+        "logs/qc/fastqc/{sample}-{unit}.log"
+    benchmark:
+        "benchmarks/qc/fastqc/{sample}-{unit}.benchmark"
     wrapper:
         "0.74.0/bio/fastqc"
 
@@ -16,7 +18,9 @@ rule samtools_stats:
     output:
         "results/qc/samtools-stats/{sample}-{unit}.txt"
     log:
-        "logs/samtools-stats/{sample}-{unit}.log"
+        "logs/qc/samtools_stats/{sample}-{unit}.log"
+    benchmark:
+        "benchmarks/qc/samtools_stats/{sample}-{unit}.benchmark"
     wrapper:
         "0.74.0/bio/samtools/stats"
 
@@ -38,8 +42,8 @@ rule multiqc:
             category="Quality control"
         )
     log:
-        "logs/multiqc.log"
+        "logs/qc/multiqc/all.log"
     benchmark:
-        "benchmarks/results/multiqc.benchmark"
+        "benchmarks/qc/multiqc/all.benchmark"
     wrapper:
         "0.74.0/bio/multiqc"
