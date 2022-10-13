@@ -92,11 +92,11 @@ rule mark_duplicates:
         "benchmarks/mapping/mark_duplicates/{sample}-{unit}.benchmark"
     params:
         extra = config["params"]["picard"]["MarkDuplicates"],
-        tmpdir = 200
     resources:
         time_min = 960, # usually takes 3-5h, make it 16
         # mem_mb = 50000
         mem_mb = lambda _wc, input: (input.size//MiB) * 3, # 3x input size
+        tmpdir_gb = lambda _wc, input: (input.size//GiB) * 2 #
     wrapper:
         "v1.14.0/bio/picard/markduplicates"
 
@@ -119,6 +119,7 @@ rule sambamba_markdup:
     resources:
         mem_mb = 10000, # 10g, usually at 3g
         time_min = 300, # 5h should suffice
+        tmpdir_gb = 100 # 100g cluster tmp dir size
     wrapper:
         "v1.8.0/bio/sambamba/markdup"
 

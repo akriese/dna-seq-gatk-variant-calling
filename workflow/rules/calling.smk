@@ -58,6 +58,7 @@ rule freebayes_snv_caller:
         normalize=False,  # optional flag to use bcftools norm to normalize indels (Valid params are -a, -f, -m, -D or -d)
     threads: lambda wc: min(100, len(get_all_sample_bams())*30)  # TODO with many samples, split this job up into multiple
     resources:
+        tmpdir_gb = 300,
         mem_mb = 500000,
         time_min = lambda wc: int(300 * (len(get_all_sample_bams())+1)) # depends on number of samples, 5h*(n_samples+1), so min 10h
     wrapper:
