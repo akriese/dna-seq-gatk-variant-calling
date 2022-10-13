@@ -78,8 +78,6 @@ rule link_or_map:
         """ [[ {input} == {output} ]] || mv {input} {output} """
 
 
-
-"""
 rule mark_duplicates:
     input:
         bams="results/mapped/{sample}-{unit}.sorted.bam",
@@ -115,6 +113,7 @@ rule sambamba_markdup:
         extra=("--overflow-list-size=600000 " +
             "--hash-table-size=600000 " +
             "-p " +
+            ("-r" if config["params"]["picard"]["MarkDuplicates"] == "REMOVE_DUPLICATES=true" else ""))
     threads: 16
     resources:
         mem_mb = 10000, # 10g, usually at 3g
@@ -122,6 +121,7 @@ rule sambamba_markdup:
         tmpdir_gb = 100 # 100g cluster tmp dir size
     wrapper:
         "v1.8.0/bio/sambamba/markdup"
+"""
 
 
 rule recalibrate_base_qualities:
