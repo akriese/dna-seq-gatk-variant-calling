@@ -64,6 +64,8 @@ rule merge_calls:
         "logs/filtering/merge_calls/{caller}.log"
     benchmark:
         "benchmarks/filtering/merge_calls/{caller}.benchmark"
+    resources:
+        mem_mb = 400000
     wrapper:
         "0.74.0/bio/picard/mergevcfs"
 

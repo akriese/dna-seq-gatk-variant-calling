@@ -31,7 +31,7 @@ rule gatk_snv_caller:
     threads: 20
         "benchmarks/calling/gatk_snv_caller/{sample}/{contig}.benchmark"
     resources:
-        mem_mb=100000
+        mem_mb = 20000, # sometimes hits 7g, give it 20
     params:
         extra=get_call_variants_params
     wrapper:
@@ -57,7 +57,7 @@ rule freebayes_snv_caller:
         normalize=False,  # optional flag to use bcftools norm to normalize indels (Valid params are -a, -f, -m, -D or -d)
     threads: 50
     resources:
-        mem_mb = 100000,
+        mem_mb = 500000,
     wrapper:
         "v1.3.2/bio/freebayes"
 

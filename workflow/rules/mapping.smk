@@ -1,3 +1,6 @@
+GiB = int(1024**3)
+MiB = int(1024**2)
+
 
 rule trim_reads_se:
     input:
@@ -51,7 +54,7 @@ rule map_reads_from_fastq:
         sort_order="coordinate"
     threads: 48
     resources:
-        mem_mb = 20000
+        # mem_mb = 35000, # sometimes hits 30g
     wrapper:
         "0.74.0/bio/bwa/mem"
 
@@ -90,7 +93,8 @@ rule mark_duplicates:
         tmpdir = 200
     threads: 30
     resources:
-        mem_mb = 40000,
+        # mem_mb = 50000
+        mem_mb = lambda _wc, input: (input.size//MiB) * 3, # 3x input size
     wrapper:
         "v1.14.0/bio/picard/markduplicates"
 
@@ -110,6 +114,8 @@ rule sambamba_markdup:
             "--hash-table-size=600000 " +
             "-p " +
     threads: 16
+    resources:
+        mem_mb = 10000, # 10g, usually at 3g
     wrapper:
         "v1.8.0/bio/sambamba/markdup"
 
@@ -132,9 +138,9 @@ rule recalibrate_base_qualities:
         extra=get_regions_param() + config["params"]["gatk"]["BaseRecalibrator"]
     threads: 20
     resources:
-        mem_mb=40000,
     benchmark:
         "benchmarks/results/gatk/bqsr/{sample}_{unit}.benchmark"
+        mem_mb = 40000, # usually takes up to 15g
     wrapper:
         "0.74.0/bio/gatk/baserecalibrator"
 
@@ -156,7 +162,7 @@ rule apply_base_quality_recalibration:
         extra=get_regions_param()
     threads: 20
     resources:
-        mem_mb=40000,
+    #     mem_mb=40000,
     wrapper:
         "0.74.0/bio/gatk/applybqsr"
 
