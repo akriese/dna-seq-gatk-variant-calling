@@ -55,7 +55,7 @@ rule freebayes_snv_caller:
     params:
         extra="",  # optional parameters
         chunksize=100000,  # reference genome chunk size for parallelization (default: 100000)
-        normalize=False,  # optional flag to use bcftools norm to normalize indels (Valid params are -a, -f, -m, -D or -d)
+        normalize=False  # optional flag to use bcftools norm to normalize indels (Valid params are -a, -f, -m, -D or -d)
     threads: lambda wc: min(100, len(get_all_sample_bams())*30)  # TODO with many samples, split this job up into multiple
     resources:
         tmpdir_gb = 300,

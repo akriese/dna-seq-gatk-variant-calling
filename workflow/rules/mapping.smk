@@ -91,7 +91,7 @@ rule mark_duplicates:
     benchmark:
         "benchmarks/mapping/mark_duplicates/{sample}-{unit}.benchmark"
     params:
-        extra = config["params"]["picard"]["MarkDuplicates"],
+        extra = config["params"]["picard"]["MarkDuplicates"]
     resources:
         time_min = 960, # usually takes 3-5h, make it 16
         # mem_mb = 50000
@@ -141,8 +141,6 @@ rule recalibrate_base_qualities:
     params:
         extra=get_regions_param() + config["params"]["gatk"]["BaseRecalibrator"]
     resources:
-    benchmark:
-        "benchmarks/results/gatk/bqsr/{sample}_{unit}.benchmark"
         mem_mb = 40000, # usually takes up to 15g
         time_min = 1440 # usually takes about 6h, make it 24h
     wrapper:
