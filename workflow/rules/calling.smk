@@ -28,8 +28,8 @@ rule gatk_snv_caller:
     log:
         "logs/calling/gatk_snv_caller/{sample}/{contig}.log"
     benchmark:
-    threads: 20
         "benchmarks/calling/gatk_snv_caller/{sample}/{contig}.benchmark"
+    threads: 5
     resources:
         mem_mb = 20000, # sometimes hits 7g, give it 20
     params:
@@ -55,7 +55,7 @@ rule freebayes_snv_caller:
         extra="",  # optional parameters
         chunksize=100000,  # reference genome chunk size for parallelization (default: 100000)
         normalize=False,  # optional flag to use bcftools norm to normalize indels (Valid params are -a, -f, -m, -D or -d)
-    threads: 50
+    threads: lambda wc: min(100, len(get_all_sample_bams())*30)  # TODO with many samples, split this job up into multiple
     resources:
         mem_mb = 500000,
     wrapper:
@@ -119,11 +119,11 @@ rule vcf_gzip:
         "results/genotyped/{prefix}.vcf"
     output:
         "results/genotyped/{prefix}.vcf.gz"
-    threads: 8
     log:
         "logs/calling/vcf_gzip/{prefix}.log"
     benchmark:
         "benchmarks/calling/vcf_gzip/{prefix}.benchmark"
+    threads: 8
     shell:
         """
         (bgzip -f --threads {threads} {input} > {output}) &> {log}

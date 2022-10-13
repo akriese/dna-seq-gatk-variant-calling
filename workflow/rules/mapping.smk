@@ -91,7 +91,6 @@ rule mark_duplicates:
     params:
         extra = config["params"]["picard"]["MarkDuplicates"],
         tmpdir = 200
-    threads: 30
     resources:
         # mem_mb = 50000
         mem_mb = lambda _wc, input: (input.size//MiB) * 3, # 3x input size
@@ -136,7 +135,6 @@ rule recalibrate_base_qualities:
         "benchmarks/mapping/recalibrate_base_qualities/{sample}-{unit}.benchmark"
     params:
         extra=get_regions_param() + config["params"]["gatk"]["BaseRecalibrator"]
-    threads: 20
     resources:
     benchmark:
         "benchmarks/results/gatk/bqsr/{sample}_{unit}.benchmark"
@@ -160,7 +158,6 @@ rule apply_base_quality_recalibration:
         "benchmarks/mapping/apply_base_quality_recalibration/{sample}-{unit}.benchmark"
     params:
         extra=get_regions_param()
-    threads: 20
     resources:
     #     mem_mb=40000,
     wrapper:
