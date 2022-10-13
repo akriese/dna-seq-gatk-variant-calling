@@ -1,6 +1,7 @@
 GiB = int(1024**3)
 MiB = int(1024**2)
 
+localrules: link_or_map, make_link_to_mapped_reads
 
 rule trim_reads_se:
     input:
