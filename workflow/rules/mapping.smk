@@ -55,6 +55,7 @@ rule map_reads_from_fastq:
     threads: 48
     resources:
         # mem_mb = 35000, # sometimes hits 30g
+        time_min = 1000, # ~16h should suffice
     wrapper:
         "0.74.0/bio/bwa/mem"
 
@@ -92,6 +93,7 @@ rule mark_duplicates:
         extra = config["params"]["picard"]["MarkDuplicates"],
         tmpdir = 200
     resources:
+        time_min = 960, # usually takes 3-5h, make it 16
         # mem_mb = 50000
         mem_mb = lambda _wc, input: (input.size//MiB) * 3, # 3x input size
     wrapper:
@@ -115,6 +117,7 @@ rule sambamba_markdup:
     threads: 16
     resources:
         mem_mb = 10000, # 10g, usually at 3g
+        time_min = 300, # 5h should suffice
     wrapper:
         "v1.8.0/bio/sambamba/markdup"
 
@@ -139,6 +142,7 @@ rule recalibrate_base_qualities:
     benchmark:
         "benchmarks/results/gatk/bqsr/{sample}_{unit}.benchmark"
         mem_mb = 40000, # usually takes up to 15g
+        time_min = 1440 # usually takes about 6h, make it 24h
     wrapper:
         "0.74.0/bio/gatk/baserecalibrator"
 
@@ -159,6 +163,7 @@ rule apply_base_quality_recalibration:
     params:
         extra=get_regions_param()
     resources:
+        time_min = 960 # usually takes up to 4h, give it 16
     #     mem_mb=40000,
     wrapper:
         "0.74.0/bio/gatk/applybqsr"
