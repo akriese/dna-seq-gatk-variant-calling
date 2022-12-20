@@ -11,6 +11,8 @@ rule select_calls:
         "benchmarks/filtering/select_calls/{caller}/{vartype}.benchmark"
     params:
         extra=get_vartype_arg
+    resources:
+        mem_mb = 50000
     wrapper:
         "0.59.0/bio/gatk/selectvariants"
 
@@ -27,6 +29,8 @@ rule hard_filter_calls:
         "benchmarks/filtering/hard_filter_calls/{caller}/{vartype}.benchmark"
     params:
         filters=get_filter
+    resources:
+        mem_mb = 50000
     wrapper:
         "0.74.0/bio/gatk/variantfiltration"
 
