@@ -94,7 +94,7 @@ rule mark_duplicates:
         time_min = 960, # usually takes 3-5h, make it 16
         # mem_mb = 50000
         mem_mb = lambda _wc, input: (input.size//MiB) * 3, # 3x input size
-        tmpdir_gb = lambda _wc, input: (input.size//GiB) * 2 #
+        tmpdir_gb = lambda _wc, input: (input.size//GiB) * 3 #
     wrapper:
         "v1.14.0/bio/picard/markduplicates"
 
