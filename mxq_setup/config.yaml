@@ -1,0 +1,13 @@
+# per node local storage
+shadow-prefix: "/scratch/local/Ckriesea"
+# jobscripts
+cluster: "mxq-submit.py"
+cluster-status: "mxq-status.py"
+jobscript: "mxq-jobscript.sh"
+# params
+latency-wait: 600
+jobs: 2048
+restart-times: 0
+local-cores: 50
+default-resources: "io_gb=2"
+immediate-submit: false
