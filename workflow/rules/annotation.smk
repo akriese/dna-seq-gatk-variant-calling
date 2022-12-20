@@ -24,6 +24,8 @@ rule annotate_variants:
         plugins=config["params"]["vep"]["plugins"],
         extra=config["params"]["vep"]["extra"]
     threads: 4
+    resources:
+        time_min = lambda w: max(960, len(get_all_sample_bams())*180) # give at least 16h, otherwise #samples*3h
     wrapper:
         "0.74.0/bio/vep/annotate"
 
