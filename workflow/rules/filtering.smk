@@ -4,7 +4,7 @@ rule select_calls:
         vcf="results/genotyped/{caller}/all.vcf.gz",
         tbi="results/genotyped/{caller}/all.vcf.gz.tbi"
     output:
-        vcf=temp("results/filtered/all.{vartype}_{caller}.vcf.gz")
+        vcf="results/filtered/all.{vartype}_{caller}.vcf.gz"
     log:
         "logs/filtering/select_calls/{caller}/{vartype}.log"
     benchmark:
@@ -20,7 +20,7 @@ rule hard_filter_calls:
         ref="resources/genome.fasta",
         vcf="results/filtered/all.{vartype}_{caller}.vcf.gz",
     output:
-        vcf=temp("results/filtered/all.{vartype}_{caller}.hardfiltered.vcf.gz")
+        vcf="results/filtered/all.{vartype}_{caller}.hardfiltered.vcf.gz"
     log:
         "logs/filtering/hard_filter_calls/{caller}/{vartype}.log"
     benchmark:
@@ -35,7 +35,7 @@ rule recalibrate_calls:
     input:
         vcf="results/filtered/all.{vartype}_{caller}.vcf.gz"
     output:
-        vcf=temp("results/filtered/all.{vartype}_{caller}.recalibrated.vcf.gz")
+        vcf="results/filtered/all.{vartype}_{caller}.recalibrated.vcf.gz"
     log:
         "logs/filtering/recalibrate_calls/{caller}/{vartype}.log"
     benchmark:
